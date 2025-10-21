@@ -8,18 +8,18 @@ export default function ConnectionStatus() {
   const statusConfig = {
     connected: {
       text: 'Connected',
-      color: 'bg-green-500',
-      textColor: 'text-green-700',
+      color: 'bg-lime-500',
+      textColor: 'text-gray-900',
     },
     connecting: {
       text: 'Connecting...',
-      color: 'bg-yellow-500',
-      textColor: 'text-yellow-700',
+      color: 'bg-amber-500',
+      textColor: 'text-gray-900',
     },
     disconnected: {
       text: 'Disconnected',
       color: 'bg-red-500',
-      textColor: 'text-red-700',
+      textColor: 'text-gray-900',
     },
   };
 
