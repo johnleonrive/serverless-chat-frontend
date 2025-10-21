@@ -56,7 +56,7 @@ serverless-chat-frontend/
 1. **Clone and install dependencies:**
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/serverless-chat-frontend.git
+git clone https://github.com/johnleonrive/serverless-chat-frontend.git
 cd serverless-chat-frontend
 npm install
 ```
