@@ -2,7 +2,7 @@
 
 CPSC 465 Project - Real-time serverless chat application frontend built with Next.js 14, TypeScript, and AWS WebSockets.
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript (strict mode)
@@ -14,7 +14,7 @@ CPSC 465 Project - Real-time serverless chat application frontend built with Nex
 - **Build**: Static export to S3 + CloudFront
 - **CI/CD**: GitHub Actions
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 serverless-chat-frontend/
@@ -42,7 +42,7 @@ serverless-chat-frontend/
 └── vitest.config.ts
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -82,7 +82,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run tests once
@@ -101,7 +101,7 @@ npm run typecheck
 npm run lint
 ```
 
-## 🏗️ Build & Export
+## Build & Export
 
 ```bash
 # Build and export static site
@@ -113,7 +113,7 @@ npm run preview
 
 The static files will be in the `out/` directory.
 
-## 🚢 Deployment
+## Deployment
 
 ### Manual Deployment
 
@@ -179,7 +179,7 @@ gh variable set WEB_BUCKET --body "your-bucket-name"
 gh variable set CF_DIST_ID --body "E1234567890ABC"
 ```
 
-## 📝 Scripts
+## Scripts
 
 | Command              | Description                      |
 | -------------------- | -------------------------------- |
@@ -192,7 +192,7 @@ gh variable set CF_DIST_ID --body "E1234567890ABC"
 | `npm run test`       | Run tests once                   |
 | `npm run test:watch` | Run tests in watch mode          |
 
-## 🔧 Configuration
+## Configuration
 
 - **TypeScript**: `tsconfig.json` - Strict mode enabled
 - **Tailwind**: `tailwind.config.ts`
@@ -201,20 +201,20 @@ gh variable set CF_DIST_ID --body "E1234567890ABC"
 - **Prettier**: `.prettierrc`
 - **Vitest**: `vitest.config.ts`
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Zustand Documentation](https://github.com/pmndrs/zustand)
 - [Vitest Documentation](https://vitest.dev/)
 - [AWS API Gateway WebSocket](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api.html)
 
-## 🤝 Contributing
+## Contributing
 
 1. Create a feature branch
 2. Make your changes
 3. Run tests and linting
 4. Submit a pull request
 
-## 📄 License
+## License
 
 MIT
