@@ -1,8 +1,14 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { WebSocketManager } from './ws';
 import type { Message } from '@/types/message';
 
 type ConnectionStatus = 'connected' | 'connecting' | 'disconnected';
+
+export interface Contact {
+  id: string;
+  name: string;
+}
 
 interface ChatState {
   messages: Message[];
@@ -11,6 +17,7 @@ interface ChatState {
   recipientId: string | null;
   username: string | null;
   ws: WebSocketManager | null;
+  contacts: Contact[];
 
   // Actions
   connect: (username: string) => void;
@@ -19,15 +26,25 @@ interface ChatState {
   selectChat: (recipientUserId: string) => void;
   addMessage: (message: Message) => void;
   setConnectionStatus: (status: ConnectionStatus) => void;
+  addContact: (contact: Contact) => void;
+  removeContact: (contactId: string) => void;
 }
 
-export const useChatStore = create<ChatState>((set, get) => ({
-  messages: [],
-  connectionStatus: 'disconnected',
-  currentChatId: null,
-  recipientId: null,
-  username: null,
-  ws: null,
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set, get) => ({
+      messages: [],
+      connectionStatus: 'disconnected',
+      currentChatId: null,
+      recipientId: null,
+      username: null,
+      ws: null,
+      contacts: [
+        { id: 'alice', name: 'Alice' },
+        { id: 'bob', name: 'Bob' },
+        { id: 'charlie', name: 'Charlie' },
+        { id: 'diana', name: 'Diana' },
+      ],
 
   connect: (username: string) => {
     const wsUrl = process.env.NEXT_PUBLIC_WS_URL;
@@ -134,4 +151,26 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setConnectionStatus: (status: ConnectionStatus) => {
     set({ connectionStatus: status });
   },
-}));
+
+  addContact: (contact: Contact) => {
+    set((state) => ({
+      contacts: [...state.contacts, contact],
+    }));
+  },
+
+  removeContact: (contactId: string) => {
+    set((state) => ({
+      contacts: state.contacts.filter((c) => c.id !== contactId),
+      // Clear chat if deleting current contact
+      ...(state.recipientId === contactId
+        ? { recipientId: null, currentChatId: null, messages: [] }
+        : {}),
+    }));
+  },
+    }),
+    {
+      name: 'chat-storage',
+      partialize: (state) => ({ contacts: state.contacts }),
+    },
+  ),
+);
