@@ -42,22 +42,29 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     const ws = new WebSocketManager({
       url: urlWithUserId,
-      onMessage: (data: {
-        type?: string;
-        messageId?: string;
-        senderId?: string;
-        text?: string;
-        timestamp?: number;
-        chatId?: string;
-      }) => {
+      onMessage: (data: unknown) => {
         // Handle incoming messages from backend
-        if (data.type === 'message') {
+        const parsedData = data as {
+          type?: string;
+          messageId?: string;
+          senderId?: string;
+          text?: string;
+          timestamp?: number;
+          chatId?: string;
+        };
+
+        if (
+          parsedData.type === 'message' &&
+          parsedData.messageId &&
+          parsedData.senderId &&
+          parsedData.timestamp
+        ) {
           const message: Message = {
-            id: data.messageId,
-            username: data.senderId,
-            content: data.text || '',
-            timestamp: new Date(data.timestamp * 1000).toISOString(),
-            chatId: data.chatId,
+            id: parsedData.messageId,
+            username: parsedData.senderId,
+            content: parsedData.text || '',
+            timestamp: new Date(parsedData.timestamp * 1000).toISOString(),
+            chatId: parsedData.chatId,
           };
           get().addMessage(message);
         }
