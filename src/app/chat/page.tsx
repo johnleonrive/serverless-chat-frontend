@@ -42,7 +42,9 @@ export default function ChatPage() {
         <header className="border-b border-gray-300 bg-white px-6 py-4 shadow-sm">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-semibold text-gray-900">
-              {recipientId ? `Chat with ${recipientId}` : 'Serverless Chat'}
+              {recipientId
+                ? `Chat with ${recipientId.charAt(0).toUpperCase() + recipientId.slice(1)}`
+                : 'Serverless Chat'}
             </h1>
             <ConnectionStatus />
           </div>
