@@ -1,17 +1,22 @@
 'use client';
 
 import { useChatStore } from '@/lib/store';
-import Link from 'next/link';
 
 interface SidebarProps {
   username: string;
   onLogout: () => void;
 }
 
-export default function Sidebar({ username, onLogout }: SidebarProps) {
-  const { currentRoom } = useChatStore();
+// Mock contacts for demo - your team can later fetch from backend
+const MOCK_CONTACTS = [
+  { id: 'alice', name: 'Alice' },
+  { id: 'bob', name: 'Bob' },
+  { id: 'charlie', name: 'Charlie' },
+  { id: 'diana', name: 'Diana' },
+];
 
-  const rooms = ['general', 'random', 'tech', 'off-topic'];
+export default function Sidebar({ username, onLogout }: SidebarProps) {
+  const { recipientId, selectChat } = useChatStore();
 
   return (
     <aside className="flex w-64 flex-col border-r border-gray-300 bg-white">
@@ -32,22 +37,27 @@ export default function Sidebar({ username, onLogout }: SidebarProps) {
         </div>
       </div>
 
-      {/* Rooms Section - Middle */}
+      {/* Contacts Section - Middle */}
       <div className="flex-1 overflow-y-auto p-4">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Rooms</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">Contacts</h2>
         <nav className="space-y-2">
-          {rooms.map((room) => (
-            <Link
-              key={room}
-              href={`/rooms/${room}`}
-              className={`block rounded-md px-4 py-2 transition ${
-                currentRoom === room
+          {MOCK_CONTACTS.map((contact) => (
+            <button
+              key={contact.id}
+              onClick={() => selectChat(contact.id)}
+              className={`flex w-full items-center gap-3 rounded-md px-4 py-2 transition ${
+                recipientId === contact.id
                   ? 'bg-lime-400 text-gray-900'
                   : 'text-gray-900 hover:bg-lime-100'
               }`}
             >
-              # {room}
-            </Link>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-lime-500 text-gray-900">
+                <span className="text-sm font-semibold">
+                  {contact.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <span className="text-sm font-medium">{contact.name}</span>
+            </button>
           ))}
         </nav>
       </div>

@@ -5,7 +5,7 @@ export const MessageSchema = z.object({
   username: z.string().min(2).max(20),
   content: z.string().min(1).max(500),
   timestamp: z.string().datetime(),
-  roomId: z.string().optional(),
+  chatId: z.string().optional(),
 });
 
 export type Message = z.infer<typeof MessageSchema>;

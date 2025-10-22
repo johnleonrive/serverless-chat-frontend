@@ -7,7 +7,8 @@ type ConnectionStatus = 'connected' | 'connecting' | 'disconnected';
 interface ChatState {
   messages: Message[];
   connectionStatus: ConnectionStatus;
-  currentRoom: string | null;
+  currentChatId: string | null;
+  recipientId: string | null;
   username: string | null;
   ws: WebSocketManager | null;
 
@@ -15,7 +16,7 @@ interface ChatState {
   connect: (username: string) => void;
   disconnect: () => void;
   sendMessage: (content: string) => void;
-  joinRoom: (roomId: string) => void;
+  selectChat: (recipientUserId: string) => void;
   addMessage: (message: Message) => void;
   setConnectionStatus: (status: ConnectionStatus) => void;
 }
@@ -23,7 +24,8 @@ interface ChatState {
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   connectionStatus: 'disconnected',
-  currentRoom: null,
+  currentChatId: null,
+  recipientId: null,
   username: null,
   ws: null,
 
@@ -35,13 +37,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
       return;
     }
 
+    // Add userId query parameter to WebSocket URL
+    const urlWithUserId = `${wsUrl}?userId=${encodeURIComponent(username)}`;
+
     const ws = new WebSocketManager({
-      url: wsUrl,
-      onMessage: (data) => {
-        // Handle incoming messages
-        // This is a placeholder - adjust based on your backend message format
-        const message = data as Message;
-        get().addMessage(message);
+      url: urlWithUserId,
+      onMessage: (data: any) => {
+        // Handle incoming messages from backend
+        if (data.type === 'message') {
+          const message: Message = {
+            id: data.messageId,
+            username: data.senderId,
+            content: data.text || '',
+            timestamp: new Date(data.timestamp * 1000).toISOString(),
+            chatId: data.chatId,
+          };
+          get().addMessage(message);
+        }
       },
       onStatusChange: (status) => {
         set({ connectionStatus: status });
@@ -59,40 +71,44 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   sendMessage: (content: string) => {
-    const { ws, username, currentRoom } = get();
+    const { ws, username, currentChatId, recipientId } = get();
 
-    if (!ws || !username) return;
+    if (!ws || !username || !recipientId || !currentChatId) return;
 
-    const message: Message = {
-      id: crypto.randomUUID(),
-      username,
-      content,
-      timestamp: new Date().toISOString(),
-      roomId: currentRoom || 'general',
-    };
-
+    // Send message in backend's expected format
     const sent = ws.send({
-      action: 'sendMessage',
-      message,
+      action: 'sendmessage',
+      chatId: currentChatId,
+      text: content,
     });
 
     if (sent) {
       // Optimistically add message to local state
+      const message: Message = {
+        id: crypto.randomUUID(),
+        username,
+        content,
+        timestamp: new Date().toISOString(),
+        chatId: currentChatId,
+      };
       get().addMessage(message);
     }
   },
 
-  joinRoom: (roomId: string) => {
-    const { ws } = get();
+  selectChat: (recipientUserId: string) => {
+    const { username } = get();
 
-    if (ws) {
-      ws.send({
-        action: 'joinRoom',
-        roomId,
-      });
-    }
+    if (!username) return;
 
-    set({ currentRoom: roomId, messages: [] });
+    // Create chatId in format: "user1#user2" (sorted alphabetically)
+    const users = [username, recipientUserId].sort();
+    const chatId = `${users[0]}#${users[1]}`;
+
+    set({
+      currentChatId: chatId,
+      recipientId: recipientUserId,
+      messages: []
+    });
   },
 
   addMessage: (message: Message) => {
