@@ -42,7 +42,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     const ws = new WebSocketManager({
       url: urlWithUserId,
-      onMessage: (data: any) => {
+      onMessage: (data: {
+        type?: string;
+        messageId?: string;
+        senderId?: string;
+        text?: string;
+        timestamp?: number;
+        chatId?: string;
+      }) => {
         // Handle incoming messages from backend
         if (data.type === 'message') {
           const message: Message = {
@@ -107,7 +114,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({
       currentChatId: chatId,
       recipientId: recipientUserId,
-      messages: []
+      messages: [],
     });
   },
 
